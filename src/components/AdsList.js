@@ -1,3 +1,4 @@
+// AdsList.js
 import React from 'react';
 
 function AdsList({ ads }) {
@@ -34,7 +35,7 @@ function AdsList({ ads }) {
             key={index} 
             style={{
               background: '#fff',
-              width: '100%', // Schimbat de la maxWidth
+              width: '100%',
               border: '1px solid #ddd',
               padding: '15px',
               boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
@@ -52,7 +53,6 @@ function AdsList({ ads }) {
               e.currentTarget.style.boxShadow = '0 1px 3px rgba(0,0,0,0.1)';
             }}
           >
-            {/* Simulare stil Google Ads */}
             <div style={{ fontSize: '12px', color: '#5f6368', marginBottom: '2px' }}>
               Sponsored
             </div>
@@ -65,7 +65,7 @@ function AdsList({ ads }) {
               color: '#1a0dab',
               fontWeight: 'normal',
               lineHeight: '1.4',
-              wordBreak: 'break-word' // Permite cuvintelor să se rupă dacă sunt prea lungi
+              wordBreak: 'break-word'
             }}>
               {[ad.h1, ad.h2, ad.h3].filter(Boolean).join(' | ')}
             </h3>
@@ -75,6 +75,24 @@ function AdsList({ ads }) {
             <p style={{ fontSize: '14px', margin: '0', color: '#202124', lineHeight: '1.4', wordBreak: 'break-word' }}>
               {ad.d2}
             </p>
+
+            {ad.phoneNumber && (
+              <p style={{
+                fontSize:'14px',
+                margin:'10px 0 0',
+                color:'#202124',
+                lineHeight:'1.4',
+                fontWeight:'bold',
+                wordBreak:'break-word',
+                display:'flex',
+                alignItems:'center',
+                gap:'5px'
+              }}>
+                {/* Iconita de telefon */}
+                <span style={{fontSize:'16px'}}>📞</span> 
+                Call {ad.phoneNumber}
+              </p>
+            )}
           </div>
         ))}
       </div>

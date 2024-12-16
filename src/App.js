@@ -18,9 +18,13 @@ function App() {
   const [uploadMessage, setUploadMessage] = useState('');
   const [useHeadline3, setUseHeadline3] = useState(true);
 
-  const dropRef = useRef(null);
+  // Stare pentru call asset
+  const [useCallAsset, setUseCallAsset] = useState(false);
 
-  // Nou: stare pentru link-ul de preview generat
+  // Stare pentru phone number
+  const [phoneNumber, setPhoneNumber] = useState('');
+
+  const dropRef = useRef(null);
   const [previewLink, setPreviewLink] = useState('');
 
   function getRandomItem(array) {
@@ -29,7 +33,7 @@ function App() {
   }
 
   async function saveAdsToFirestore(ads) {
-    const expiresAt = Date.now() + (30 * 24 * 60 * 60 * 1000); // 30 de zile
+    const expiresAt = Date.now() + (30 * 24 * 60 * 60 * 1000);
     const docRef = await addDoc(collection(db, "adsPreviews"), {
       ads,
       expiresAt
@@ -63,14 +67,20 @@ function App() {
         d2 = d2Candidate;
       }
 
-      ads.push({ h1, h2, h3, d1, d2, link: clientLink || 'www.example.com' });
+      const ad = { h1, h2, h3, d1, d2, link: clientLink || 'www.example.com' };
+
+      // Daca e setat call asset si avem un numar
+      if (useCallAsset && phoneNumber.trim() !== '') {
+        ad.phoneNumber = phoneNumber.trim();
+      }
+
+      ads.push(ad);
     }
     setGeneratedAds(ads);
 
-    // Salvăm ad-urile în Firestore și obținem un ID
     const docId = await saveAdsToFirestore(ads);
     const link = `${window.location.origin}/preview/${docId}`;
-    setPreviewLink(link); // Setăm link-ul în state
+    setPreviewLink(link);
   };
 
   const handleFiles = (files) => {
@@ -93,7 +103,6 @@ function App() {
         const newH3 = [];
         const newDesc = [];
 
-        // Columns: A=0 (Website), B=1(H1), D=3(H2), F=5(H3), H=7(Description)
         for (let i = 1; i < data.length; i++) {
           const row = data[i];
           if (row && row.length > 7) {
@@ -108,7 +117,7 @@ function App() {
             if (h2) newH2.push(h2);
             if (h3) newH3.push(h3);
             if (desc) newDesc.push(desc);
-          } 
+          }
         }
 
         if (newClientLinks.length > 0) {
@@ -205,6 +214,7 @@ function App() {
           headlines3={headlines3} setHeadlines3={setHeadlines3}
           descriptions={descriptions} setDescriptions={setDescriptions}
           clientLink={clientLink} setClientLink={setClientLink}
+          phoneNumber={phoneNumber} setPhoneNumber={setPhoneNumber}
         />
         <div style={{ textAlign: 'center', marginBottom: '30px' }}>
           <div style={{ marginBottom: '20px', display:'flex', justifyContent:'center', alignItems:'center', flexDirection:'column' }}>
@@ -267,10 +277,25 @@ function App() {
                 color: '#fff',
                 border: 'none',
                 borderRadius: '20px',
-                fontWeight: 'bold'
+                fontWeight: 'bold',
+                marginRight:'10px'
               }}
             >
               Without Headline 3
+            </button>
+            <button 
+              onClick={() => setUseCallAsset(!useCallAsset)} 
+              style={{
+                padding: '10px 20px', 
+                cursor: 'pointer', 
+                background: useCallAsset ? '#007BFF' : '#777',
+                color: '#fff',
+                border: 'none',
+                borderRadius: '20px',
+                fontWeight: 'bold'
+              }}
+            >
+              {useCallAsset ? 'With Call Asset' : 'Without Call Asset'}
             </button>
           </div>
 
@@ -300,7 +325,6 @@ function App() {
             Generate 10 Random Ads
           </button>
 
-          {/* Afișăm butonul de copiere link doar dacă previewLink este setat */}
           {previewLink && (
             <div style={{ marginTop: '20px' }}>
               <p style={{color:'#333', marginBottom:'10px'}}>Your preview link:</p>

@@ -1,3 +1,4 @@
+// InputForm.js
 import React from 'react';
 
 function InputForm({
@@ -5,7 +6,8 @@ function InputForm({
   headlines2, setHeadlines2,
   headlines3, setHeadlines3,
   descriptions, setDescriptions,
-  clientLink, setClientLink
+  clientLink, setClientLink,
+  phoneNumber, setPhoneNumber
 }) {
 
   const handleChange = (setter) => (e) => {
@@ -62,7 +64,21 @@ function InputForm({
           onBlur={handleBlur}
         />
       </div>
-      
+
+      <div style={{ display: 'flex', flexDirection: 'column' }}>
+        <label htmlFor="phone" style={labelStyle}>Phone Number (for Call Asset)</label>
+        <input
+          id="phone"
+          type="text"
+          placeholder="e.g., 8001234567"
+          value={phoneNumber}
+          onChange={(e) => setPhoneNumber(e.target.value)}
+          style={inputStyle}
+          onFocus={handleFocus}
+          onBlur={handleBlur}
+        />
+      </div>
+
       <div style={{ display: 'flex', flexDirection: 'column' }}>
         <label htmlFor="h1" style={labelStyle}>Headline 1 (H1)*</label>
         <textarea

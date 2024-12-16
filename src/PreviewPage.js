@@ -89,7 +89,6 @@ function PreviewPage() {
             e.currentTarget.style.transform = 'translateY(0)';
             e.currentTarget.style.boxShadow = '0 1px 3px rgba(0,0,0,0.1)';
           }}>
-            {/* Simulare stil Google Ads */}
             <div style={{ 
               fontSize: '12px', 
               color: '#5f6368', 
@@ -131,12 +130,28 @@ function PreviewPage() {
             </p>
             <p style={{ 
               fontSize: '14px', 
-              margin: '0', 
+              margin: '0 0 5px', 
               color: '#202124', 
               lineHeight: '1.4' 
             }}>
               {ad.d2}
             </p>
+            {ad.phoneNumber && (
+              <p style={{
+                fontSize:'14px',
+                margin:'10px 0 0',
+                color:'#202124',
+                lineHeight:'1.4',
+                fontWeight:'bold',
+                wordBreak:'break-word',
+                display:'flex',
+                alignItems:'center',
+                gap:'5px'
+              }}>
+                <span style={{fontSize:'16px'}}>📞</span> 
+                Call {ad.phoneNumber}
+              </p>
+            )}
           </div>
         ))}
       </div>

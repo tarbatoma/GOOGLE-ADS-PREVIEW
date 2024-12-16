@@ -1,7 +1,10 @@
+// App.js
 import React, { useState, useRef } from 'react';
 import Papa from 'papaparse';
 import InputForm from './components/InputForm';
 import AdsList from './components/AdsList';
+import { db } from './firebase';
+import { collection, addDoc } from "firebase/firestore";
 
 function App() {
   const [clientLink, setClientLink] = useState('');
@@ -13,17 +16,28 @@ function App() {
 
   const [isDragging, setIsDragging] = useState(false);
   const [uploadMessage, setUploadMessage] = useState('');
+  const [useHeadline3, setUseHeadline3] = useState(true);
+
   const dropRef = useRef(null);
 
-  // Nou: Stare pentru a decide dacă folosim Headline3
-  const [useHeadline3, setUseHeadline3] = useState(true);
+  // Nou: stare pentru link-ul de preview generat
+  const [previewLink, setPreviewLink] = useState('');
 
   function getRandomItem(array) {
     const index = Math.floor(Math.random() * array.length);
     return array[index];
   }
 
-  const generateAds = () => {
+  async function saveAdsToFirestore(ads) {
+    const expiresAt = Date.now() + (30 * 24 * 60 * 60 * 1000); // 30 de zile
+    const docRef = await addDoc(collection(db, "adsPreviews"), {
+      ads,
+      expiresAt
+    });
+    return docRef.id;
+  }
+
+  const generateAds = async () => {
     if (headlines1.length === 0 || headlines2.length === 0 || descriptions.length === 0) {
       alert("Please ensure you have at least one H1, one H2, and one Description (from either manual input or CSV).");
       return;
@@ -33,7 +47,6 @@ function App() {
     for (let i = 0; i < 10; i++) {
       const h1 = getRandomItem(headlines1);
       const h2 = getRandomItem(headlines2);
-      // Dacă nu folosim H3 sau nu există h3-uri disponibile, lasă h3-ul gol
       const h3 = (useHeadline3 && headlines3.length > 0) ? getRandomItem(headlines3) : '';
 
       let d1;
@@ -53,17 +66,20 @@ function App() {
       ads.push({ h1, h2, h3, d1, d2, link: clientLink || 'www.example.com' });
     }
     setGeneratedAds(ads);
+
+    // Salvăm ad-urile în Firestore și obținem un ID
+    const docId = await saveAdsToFirestore(ads);
+    const link = `${window.location.origin}/preview/${docId}`;
+    setPreviewLink(link); // Setăm link-ul în state
   };
 
   const handleFiles = (files) => {
     const file = files[0];
     if (!file) return;
-
     Papa.parse(file, {
       skipEmptyLines: true,
       complete: (results) => {
         const data = results.data;
-
         setUploadMessage('');
 
         if (!data || data.length <= 1) {
@@ -131,7 +147,6 @@ function App() {
     e.preventDefault();
     e.stopPropagation();
     setIsDragging(false);
-
     const files = e.dataTransfer.files;
     if (files && files.length > 0) {
       handleFiles(files);
@@ -177,7 +192,7 @@ function App() {
       }}>Google Ads Preview Tool</h1>
       <div style={{
         background: '#fff',
-        maxWidth: '1400px', // marim la 1400px ca sa incapa 2 coloane
+        maxWidth: '1400px',
         margin: '0 auto 40px auto',
         borderRadius: '8px',
         boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
@@ -284,6 +299,31 @@ function App() {
           >
             Generate 10 Random Ads
           </button>
+
+          {/* Afișăm butonul de copiere link doar dacă previewLink este setat */}
+          {previewLink && (
+            <div style={{ marginTop: '20px' }}>
+              <p style={{color:'#333', marginBottom:'10px'}}>Your preview link:</p>
+              <p style={{color:'#333', marginBottom:'10px', wordBreak:'break-all'}}>{previewLink}</p>
+              <button
+                onClick={() => {
+                  navigator.clipboard.writeText(previewLink);
+                  alert('Link copied to clipboard!');
+                }}
+                style={{
+                  padding: '10px 20px',
+                  cursor: 'pointer',
+                  background: '#28a745',
+                  color: '#fff',
+                  border: 'none',
+                  borderRadius: '20px',
+                  fontWeight: 'bold'
+                }}
+              >
+                Copy Link
+              </button>
+            </div>
+          )}
         </div>
       </div>
 

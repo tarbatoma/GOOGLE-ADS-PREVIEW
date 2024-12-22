@@ -7,8 +7,16 @@ function InputForm({
   headlines3, setHeadlines3,
   descriptions, setDescriptions,
   clientLink, setClientLink,
-  phoneNumber, setPhoneNumber
+  phoneNumber, setPhoneNumber,
+  sitelinks, setSitelinks,
+  useSitelinks
 }) {
+
+  const handleSitelinkChange = (index, field, value) => {
+    const updated = [...sitelinks];
+    updated[index][field] = value;
+    setSitelinks(updated);
+  };
 
   const handleChange = (setter) => (e) => {
     const lines = e.target.value
@@ -51,6 +59,7 @@ function InputForm({
         gap: '20px'
       }}
     >
+      {/* ============== ROW 1 ============== */}
       <div style={{ display: 'flex', flexDirection: 'column' }}>
         <label htmlFor="link" style={labelStyle}>Client URL</label>
         <input
@@ -79,6 +88,7 @@ function InputForm({
         />
       </div>
 
+      {/* ============== ROW 2 ============== */}
       <div style={{ display: 'flex', flexDirection: 'column' }}>
         <label htmlFor="h1" style={labelStyle}>Headline 1 (H1)*</label>
         <textarea
@@ -104,7 +114,8 @@ function InputForm({
           onBlur={handleBlur}
         />
       </div>
-      
+
+      {/* ============== ROW 3 ============== */}
       <div style={{ display: 'flex', flexDirection: 'column' }}>
         <label htmlFor="h3" style={labelStyle}>Headline 3 (H3) - optional</label>
         <textarea
@@ -130,6 +141,52 @@ function InputForm({
           onBlur={handleBlur}
         />
       </div>
+
+      {/* ============== SITELINKS ============== */}
+      {useSitelinks && (
+        <div style={{ gridColumn: '1 / span 2' }}>
+          <label style={labelStyle}>Sitelinks (up to 4)</label>
+          <div style={{ display:'grid', gridTemplateColumns:'repeat(2, 1fr)', gap:'10px' }}>
+            {sitelinks.map((sl, i) => (
+              <div 
+                key={i} 
+                style={{
+                  display:'flex', 
+                  flexDirection:'column', 
+                  border:'1px solid #ccc', 
+                  borderRadius:'8px',
+                  padding:'10px'
+                }}
+              >
+                <label style={{marginBottom:'5px', fontWeight:'bold'}}>
+                  Sitelink {i+1} Title
+                </label>
+                <input
+                  type="text"
+                  placeholder="e.g., About Us"
+                  value={sl.title}
+                  onChange={(e) => handleSitelinkChange(i, 'title', e.target.value)}
+                  style={inputStyle}
+                  onFocus={handleFocus}
+                  onBlur={handleBlur}
+                />
+                <label style={{marginBottom:'5px', fontWeight:'bold'}}>
+                  Sitelink {i+1} URL
+                </label>
+                <input
+                  type="text"
+                  placeholder="e.g., www.example.com/about"
+                  value={sl.url}
+                  onChange={(e) => handleSitelinkChange(i, 'url', e.target.value)}
+                  style={inputStyle}
+                  onFocus={handleFocus}
+                  onBlur={handleBlur}
+                />
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -14,18 +14,26 @@ function App() {
   const [descriptions, setDescriptions] = useState([]);
   const [generatedAds, setGeneratedAds] = useState([]);
 
-  const [isDragging, setIsDragging] = useState(false);
-  const [uploadMessage, setUploadMessage] = useState('');
-  const [useHeadline3, setUseHeadline3] = useState(true);
-
-  // Stare pentru call asset
+  // Toggling + data for call asset
   const [useCallAsset, setUseCallAsset] = useState(false);
-
-  // Stare pentru phone number
   const [phoneNumber, setPhoneNumber] = useState('');
 
-  const dropRef = useRef(null);
+  // Toggling + data for sitelinks
+  const [useSitelinks, setUseSitelinks] = useState(false);
+  const [sitelinks, setSitelinks] = useState([
+    { title: '', url: '' },
+    { title: '', url: '' },
+    { title: '', url: '' },
+    { title: '', url: '' },
+  ]);
+
+  // Toggling + data for headline 3
+  const [useHeadline3, setUseHeadline3] = useState(true);
+
+  const [isDragging, setIsDragging] = useState(false);
+  const [uploadMessage, setUploadMessage] = useState('');
   const [previewLink, setPreviewLink] = useState('');
+  const dropRef = useRef(null);
 
   function getRandomItem(array) {
     const index = Math.floor(Math.random() * array.length);
@@ -36,14 +44,14 @@ function App() {
     const expiresAt = Date.now() + (30 * 24 * 60 * 60 * 1000);
     const docRef = await addDoc(collection(db, "adsPreviews"), {
       ads,
-      expiresAt
+      expiresAt,
     });
     return docRef.id;
   }
 
   const generateAds = async () => {
     if (headlines1.length === 0 || headlines2.length === 0 || descriptions.length === 0) {
-      alert("Please ensure you have at least one H1, one H2, and one Description (from either manual input or CSV).");
+      alert("Please ensure you have at least one H1, one H2, and one Description.");
       return;
     }
 
@@ -53,6 +61,7 @@ function App() {
       const h2 = getRandomItem(headlines2);
       const h3 = (useHeadline3 && headlines3.length > 0) ? getRandomItem(headlines3) : '';
 
+      // Descriptions
       let d1;
       let d2;
       if (descriptions.length === 1) {
@@ -67,15 +76,28 @@ function App() {
         d2 = d2Candidate;
       }
 
-      const ad = { h1, h2, h3, d1, d2, link: clientLink || 'www.example.com' };
+      const ad = { 
+        h1, h2, h3, 
+        d1, d2, 
+        link: clientLink.trim() || 'www.example.com' 
+      };
 
-      // Daca e setat call asset si avem un numar
+      // Adaugăm call asset (phoneNumber) dacă este setat
       if (useCallAsset && phoneNumber.trim() !== '') {
         ad.phoneNumber = phoneNumber.trim();
       }
 
+      // Adăugăm sitelinks dacă sunt activate
+      if (useSitelinks) {
+        const validSitelinks = sitelinks.filter(sl => sl.title.trim() !== '' && sl.url.trim() !== '');
+        if (validSitelinks.length > 0) {
+          ad.sitelinks = validSitelinks;
+        }
+      }
+
       ads.push(ad);
     }
+
     setGeneratedAds(ads);
 
     const docId = await saveAdsToFirestore(ads);
@@ -123,12 +145,18 @@ function App() {
         if (newClientLinks.length > 0) {
           setClientLink(newClientLinks[newClientLinks.length - 1]);
         }
-        if (newH1.length > 0) setHeadlines1((prev) => [...prev, ...newH1]);
-        if (newH2.length > 0) setHeadlines2((prev) => [...prev, ...newH2]);
-        if (newH3.length > 0) setHeadlines3((prev) => [...prev, ...newH3.filter(Boolean)]);
-        if (newDesc.length > 0) setDescriptions((prev) => [...prev, ...newDesc]);
+        if (newH1.length > 0) setHeadlines1(prev => [...prev, ...newH1]);
+        if (newH2.length > 0) setHeadlines2(prev => [...prev, ...newH2]);
+        if (newH3.length > 0) setHeadlines3(prev => [...prev, ...newH3]);
+        if (newDesc.length > 0) setDescriptions(prev => [...prev, ...newDesc]);
 
-        if (newClientLinks.length === 0 && newH1.length === 0 && newH2.length === 0 && newH3.length === 0 && newDesc.length === 0) {
+        if (
+          newClientLinks.length === 0 && 
+          newH1.length === 0 && 
+          newH2.length === 0 && 
+          newH3.length === 0 && 
+          newDesc.length === 0
+        ) {
           setUploadMessage('No data extracted from the CSV. Please check the file format.');
         } else {
           setUploadMessage('Upload successful! You can now generate ads.');
@@ -192,13 +220,17 @@ function App() {
           Drop your CSV file here
         </div>
       )}
+
       <h1 style={{ 
         textAlign: 'center', 
         margin: '30px 0', 
         color: '#fff', 
         fontSize: '2.5em',
         textShadow: '0 2px 5px rgba(0,0,0,0.3)'
-      }}>Google Ads Preview Tool</h1>
+      }}>
+        Google Ads Preview Tool
+      </h1>
+
       <div style={{
         background: '#fff',
         maxWidth: '1400px',
@@ -215,10 +247,20 @@ function App() {
           descriptions={descriptions} setDescriptions={setDescriptions}
           clientLink={clientLink} setClientLink={setClientLink}
           phoneNumber={phoneNumber} setPhoneNumber={setPhoneNumber}
+          sitelinks={sitelinks} setSitelinks={setSitelinks}
+          useSitelinks={useSitelinks}
         />
         <div style={{ textAlign: 'center', marginBottom: '30px' }}>
-          <div style={{ marginBottom: '20px', display:'flex', justifyContent:'center', alignItems:'center', flexDirection:'column' }}>
-            <p style={{ color:'#333', marginBottom:'10px', fontWeight:'bold' }}>Or Click Below to Choose a CSV File</p>
+          <div style={{
+            marginBottom: '20px',
+            display:'flex',
+            justifyContent:'center',
+            alignItems:'center',
+            flexDirection:'column'
+          }}>
+            <p style={{ color:'#333', marginBottom:'10px', fontWeight:'bold' }}>
+              Or Click Below to Choose a CSV File
+            </p>
             <label 
               htmlFor="csvUpload"
               style={{
@@ -249,7 +291,11 @@ function App() {
                 }
               }}
             />
-            {uploadMessage && <p style={{ color: 'green', marginTop: '10px', fontWeight:'bold' }}>{uploadMessage}</p>}
+            {uploadMessage && (
+              <p style={{ color: 'green', marginTop: '10px', fontWeight:'bold' }}>
+                {uploadMessage}
+              </p>
+            )}
           </div>
 
           <div style={{marginBottom:'20px'}}>
@@ -268,6 +314,7 @@ function App() {
             >
               With Headline 3
             </button>
+
             <button 
               onClick={() => setUseHeadline3(false)} 
               style={{
@@ -283,6 +330,7 @@ function App() {
             >
               Without Headline 3
             </button>
+
             <button 
               onClick={() => setUseCallAsset(!useCallAsset)} 
               style={{
@@ -292,10 +340,26 @@ function App() {
                 color: '#fff',
                 border: 'none',
                 borderRadius: '20px',
-                fontWeight: 'bold'
+                fontWeight: 'bold',
+                marginRight:'10px'
               }}
             >
               {useCallAsset ? 'With Call Asset' : 'Without Call Asset'}
+            </button>
+
+            <button
+              onClick={() => setUseSitelinks(!useSitelinks)}
+              style={{
+                padding: '10px 20px',
+                cursor: 'pointer',
+                background: useSitelinks ? '#007BFF' : '#777',
+                color: '#fff',
+                border: 'none',
+                borderRadius: '20px',
+                fontWeight: 'bold'
+              }}
+            >
+              {useSitelinks ? 'With Sitelinks' : 'Without Sitelinks'}
             </button>
           </div>
 
@@ -327,8 +391,16 @@ function App() {
 
           {previewLink && (
             <div style={{ marginTop: '20px' }}>
-              <p style={{color:'#333', marginBottom:'10px'}}>Your preview link:</p>
-              <p style={{color:'#333', marginBottom:'10px', wordBreak:'break-all'}}>{previewLink}</p>
+              <p style={{color:'#333', marginBottom:'10px'}}>
+                Your preview link:
+              </p>
+              <p style={{
+                color:'#333',
+                marginBottom:'10px',
+                wordBreak:'break-all'
+              }}>
+                {previewLink}
+              </p>
               <button
                 onClick={() => {
                   navigator.clipboard.writeText(previewLink);

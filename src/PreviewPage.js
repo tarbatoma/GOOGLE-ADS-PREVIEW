@@ -136,6 +136,8 @@ function PreviewPage() {
             }}>
               {ad.d2}
             </p>
+            
+            {/* Call asset */}
             {ad.phoneNumber && (
               <p style={{
                 fontSize:'14px',
@@ -148,9 +150,34 @@ function PreviewPage() {
                 alignItems:'center',
                 gap:'5px'
               }}>
-                <span style={{fontSize:'16px'}}>📞</span> 
+                <span style={{fontSize:'16px'}}>☎</span> 
                 Call {ad.phoneNumber}
               </p>
+            )}
+
+            {/* Sitelinks */}
+            {ad.sitelinks && ad.sitelinks.length > 0 && (
+              <div style={{
+                marginTop:'10px',
+                display:'flex',
+                flexWrap:'wrap',
+                gap:'10px'
+              }}>
+                {ad.sitelinks.map((sl, i) => (
+                  <a
+                    key={i}
+                    href={sl.url.startsWith('http') ? sl.url : `https://${sl.url}`}
+                    style={{
+                      color:'#1a0dab',
+                      fontSize:'14px',
+                      textDecoration:'none',
+                      whiteSpace:'nowrap'
+                    }}
+                  >
+                    {sl.title}
+                  </a>
+                ))}
+              </div>
             )}
           </div>
         ))}

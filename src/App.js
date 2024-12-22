@@ -3,10 +3,11 @@ import React, { useState, useRef } from 'react';
 import Papa from 'papaparse';
 import InputForm from './components/InputForm';
 import AdsList from './components/AdsList';
-import { db } from './firebase';
+import { db, auth } from './firebase';
 import { collection, addDoc } from "firebase/firestore";
+import { signOut } from 'firebase/auth';
 
-function App() {
+function App({ user }) {
   const [clientLink, setClientLink] = useState('');
   const [headlines1, setHeadlines1] = useState([]);
   const [headlines2, setHeadlines2] = useState([]);
@@ -34,6 +35,17 @@ function App() {
   const [uploadMessage, setUploadMessage] = useState('');
   const [previewLink, setPreviewLink] = useState('');
   const dropRef = useRef(null);
+
+  // === Funcție de Logout ===
+  const handleLogout = async () => {
+    try {
+      await signOut(auth);
+      // Odată ce signOut reușește, user devine null (în onAuthStateChanged),
+      // iar index.js va afișa Login
+    } catch (error) {
+      console.error('Logout error:', error);
+    }
+  };
 
   function getRandomItem(array) {
     const index = Math.floor(Math.random() * array.length);
@@ -82,12 +94,12 @@ function App() {
         link: clientLink.trim() || 'www.example.com' 
       };
 
-      // Adaugăm call asset (phoneNumber) dacă este setat
+      // Call asset
       if (useCallAsset && phoneNumber.trim() !== '') {
         ad.phoneNumber = phoneNumber.trim();
       }
 
-      // Adăugăm sitelinks dacă sunt activate
+      // Sitelinks
       if (useSitelinks) {
         const validSitelinks = sitelinks.filter(sl => sl.title.trim() !== '' && sl.url.trim() !== '');
         if (validSitelinks.length > 0) {
@@ -204,6 +216,7 @@ function App() {
       onDragLeave={handleDragLeave}
       ref={dropRef}
     >
+      {/* Efectul de "Drop your CSV" */}
       {isDragging && (
         <div style={{
           position: 'fixed',
@@ -220,6 +233,32 @@ function App() {
           Drop your CSV file here
         </div>
       )}
+
+      {/* Header-ul cu "Welcome user" și butonul de Logout */}
+      <header style={{
+        display:'flex',
+        justifyContent:'space-between',
+        alignItems:'center',
+        background:'#242c3a',
+        padding:'10px 20px',
+        color:'#fff'
+      }}>
+        <div>Welcome, {user?.email}</div>
+        <button
+          onClick={handleLogout}
+          style={{
+            padding:'8px 16px',
+            background:'#f44336', // un roșu pentru logout
+            border:'none',
+            borderRadius:'20px',
+            color:'#fff',
+            cursor:'pointer',
+            fontWeight:'bold'
+          }}
+        >
+          Logout
+        </button>
+      </header>
 
       <h1 style={{ 
         textAlign: 'center', 
@@ -423,6 +462,7 @@ function App() {
         </div>
       </div>
 
+      {/* Afișează reclamele generate */}
       <div style={{maxWidth: '1400px', margin:'0 auto', padding: '0 20px', marginBottom:'40px'}}>
         <AdsList ads={generatedAds} />
       </div>

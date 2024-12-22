@@ -1,0 +1,111 @@
+/* src/styles/Login.css */
+
+/* Animația care extinde background-ul negru */
+@keyframes slideInBackground {
+      0% {
+        background-color: #f0f2f5;
+        width: 0;
+      }
+      100% {
+        background-color: #1F2731;
+        width: 100%;
+      }
+    }
+    
+    /* Animație fadeIn simplă */
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
+    }
+    
+    /* Container principal */
+    .login-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    /* Pseudoelement care animă backgroundul negru */
+    .login-container::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 100%;
+      background-color: #1F2731;
+      animation: slideInBackground 2s forwards;
+    }
+    
+    /* Clasa care indică finalul animației de background */
+    .login-container.show-content {
+      position: relative;
+      z-index: 1;
+    }
+    
+    /* După show-content, logo și formular devin vizibile cu fadeIn */
+    .login-container.show-content .login-logo {
+      animation: fadeIn 0.5s forwards;
+    }
+    
+    .login-container.show-content .login-form {
+      animation: fadeIn 0.5s forwards 0.5s;
+    }
+    
+    /* Formularul propriu-zis */
+    .login-form {
+      background: rgba(255, 255, 255, 0.3); /* "frozen" glass effect */
+      backdrop-filter: blur(10px);
+      padding: 2rem;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 400px;
+      opacity: 0; /* Devine vizibil după animație */
+    }
+    
+    /* Logo-ul */
+    .login-logo {
+      margin-bottom: 1rem;
+      opacity: 0; /* E ascuns până când show-content e activ */
+    }
+    
+    .login-logo img {
+      width: 100px;
+      height: 50px;
+    }
+    
+    /* Titlu */
+    .login-title {
+      margin-bottom: 1.5rem;
+      text-align: center;
+    }
+    
+    /* Inputurile de email / password */
+    .login-form input {
+      width: 100%;
+      padding: 0.75rem;
+      margin: 0.5rem 0;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    
+    /* Butonul de login */
+    .login-form button {
+      width: 100%;
+      padding: 0.75rem;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    

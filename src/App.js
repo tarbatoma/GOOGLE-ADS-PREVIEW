@@ -36,12 +36,16 @@ function App({ user }) {
   const [previewLink, setPreviewLink] = useState('');
   const dropRef = useRef(null);
 
+  // Ad Copy Spreadsheet link
+  const [adCopySpreadsheetLink, setAdCopySpreadsheetLink] = useState('');
+
+  // ADDED: Toggler pentru Display Ads (Include/Exclude)
+  const [includeDisplayAds, setIncludeDisplayAds] = useState(false);
+
   // === Funcție de Logout ===
   const handleLogout = async () => {
     try {
       await signOut(auth);
-      // Odată ce signOut reușește, user devine null (în onAuthStateChanged),
-      // iar index.js va afișa Login
     } catch (error) {
       console.error('Logout error:', error);
     }
@@ -52,11 +56,14 @@ function App({ user }) {
     return array[index];
   }
 
-  async function saveAdsToFirestore(ads) {
+  // Salvează anunțurile în Firestore, inclusiv info despre Display Ads
+  async function saveAdsToFirestore(ads, adCopySpreadsheetLink) {
     const expiresAt = Date.now() + (30 * 24 * 60 * 60 * 1000);
     const docRef = await addDoc(collection(db, "adsPreviews"), {
       ads,
       expiresAt,
+      adCopySpreadsheetLink,
+      includeDisplayAds // ADDED: salvăm decizia
     });
     return docRef.id;
   }
@@ -88,10 +95,13 @@ function App({ user }) {
         d2 = d2Candidate;
       }
 
-      const ad = { 
-        h1, h2, h3, 
-        d1, d2, 
-        link: clientLink.trim() || 'www.example.com' 
+      const ad = {
+        h1,
+        h2,
+        h3,
+        d1,
+        d2,
+        link: clientLink.trim() || 'www.example.com'
       };
 
       // Call asset
@@ -112,7 +122,7 @@ function App({ user }) {
 
     setGeneratedAds(ads);
 
-    const docId = await saveAdsToFirestore(ads);
+    const docId = await saveAdsToFirestore(ads, adCopySpreadsheetLink);
     const link = `${window.location.origin}/preview/${docId}`;
     setPreviewLink(link);
   };
@@ -163,10 +173,10 @@ function App({ user }) {
         if (newDesc.length > 0) setDescriptions(prev => [...prev, ...newDesc]);
 
         if (
-          newClientLinks.length === 0 && 
-          newH1.length === 0 && 
-          newH2.length === 0 && 
-          newH3.length === 0 && 
+          newClientLinks.length === 0 &&
+          newH1.length === 0 &&
+          newH2.length === 0 &&
+          newH3.length === 0 &&
           newDesc.length === 0
         ) {
           setUploadMessage('No data extracted from the CSV. Please check the file format.');
@@ -203,7 +213,7 @@ function App({ user }) {
   };
 
   return (
-    <div 
+    <div
       style={{
         fontFamily: 'sans-serif',
         minHeight: '100vh',
@@ -218,67 +228,76 @@ function App({ user }) {
     >
       {/* Efectul de "Drop your CSV" */}
       {isDragging && (
-        <div style={{
-          position: 'fixed',
-          top:0, left:0, right:0, bottom:0,
-          backgroundColor: 'rgba(0,0,0,0.3)',
-          zIndex: 9999,
-          display:'flex',
-          alignItems:'center',
-          justifyContent:'center',
-          color:'#fff',
-          fontSize:'24px',
-          fontWeight:'bold'
-        }}>
+        <div
+          style={{
+            position: 'fixed',
+            top: 0, left: 0, right: 0, bottom: 0,
+            backgroundColor: 'rgba(0,0,0,0.3)',
+            zIndex: 9999,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            color: '#fff',
+            fontSize: '24px',
+            fontWeight: 'bold'
+          }}
+        >
           Drop your CSV file here
         </div>
       )}
 
       {/* Header-ul cu "Welcome user" și butonul de Logout */}
-      <header style={{
-        display:'flex',
-        justifyContent:'space-between',
-        alignItems:'center',
-        background:'#242c3a',
-        padding:'10px 20px',
-        color:'#fff'
-      }}>
+      <header
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          background: '#242c3a',
+          padding: '10px 20px',
+          color: '#fff'
+        }}
+      >
         <div>Welcome, {user?.email}</div>
         <button
           onClick={handleLogout}
           style={{
-            padding:'8px 16px',
-            background:'#f44336', // un roșu pentru logout
-            border:'none',
-            borderRadius:'20px',
-            color:'#fff',
-            cursor:'pointer',
-            fontWeight:'bold'
+            padding: '8px 16px',
+            background: '#f44336',
+            border: 'none',
+            borderRadius: '20px',
+            color: '#fff',
+            cursor: 'pointer',
+            fontWeight: 'bold'
           }}
         >
           Logout
         </button>
       </header>
 
-      <h1 style={{ 
-        textAlign: 'center', 
-        margin: '30px 0', 
-        color: '#fff', 
-        fontSize: '2.5em',
-        textShadow: '0 2px 5px rgba(0,0,0,0.3)'
-      }}>
+      <h1
+        style={{
+          textAlign: 'center',
+          margin: '30px 0',
+          color: '#fff',
+          fontSize: '2.5em',
+          textShadow: '0 2px 5px rgba(0,0,0,0.3)'
+        }}
+      >
         Google Ads Preview Tool
       </h1>
 
-      <div style={{
-        background: '#fff',
-        maxWidth: '1400px',
-        margin: '0 auto 40px auto',
-        borderRadius: '8px',
-        boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
-        padding: '30px',
-        transition: 'all 0.3s ease-in-out'
-      }}>
+      <div
+        style={{
+          background: '#fff',
+          maxWidth: '1400px',
+          margin: '0 auto 40px auto',
+          borderRadius: '8px',
+          boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
+          padding: '30px',
+          transition: 'all 0.3s ease-in-out'
+        }}
+      >
+        {/* Formularul cu Headline1,2,3, Description, etc. */}
         <InputForm
           headlines1={headlines1} setHeadlines1={setHeadlines1}
           headlines2={headlines2} setHeadlines2={setHeadlines2}
@@ -288,19 +307,24 @@ function App({ user }) {
           phoneNumber={phoneNumber} setPhoneNumber={setPhoneNumber}
           sitelinks={sitelinks} setSitelinks={setSitelinks}
           useSitelinks={useSitelinks}
+          adCopySpreadsheetLink={adCopySpreadsheetLink}
+          setAdCopySpreadsheetLink={setAdCopySpreadsheetLink}
         />
+
         <div style={{ textAlign: 'center', marginBottom: '30px' }}>
-          <div style={{
-            marginBottom: '20px',
-            display:'flex',
-            justifyContent:'center',
-            alignItems:'center',
-            flexDirection:'column'
-          }}>
-            <p style={{ color:'#333', marginBottom:'10px', fontWeight:'bold' }}>
+          <div
+            style={{
+              marginBottom: '20px',
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              flexDirection: 'column'
+            }}
+          >
+            <p style={{ color: '#333', marginBottom: '10px', fontWeight: 'bold' }}>
               Or Click Below to Choose a CSV File
             </p>
-            <label 
+            <label
               htmlFor="csvUpload"
               style={{
                 display: 'inline-block',
@@ -314,73 +338,74 @@ function App({ user }) {
                 fontWeight: 'bold',
                 boxShadow: '0 2px 5px rgba(0,0,0,0.2)'
               }}
-              onMouseOver={e => e.target.style.transform = 'scale(1.05)'}
-              onMouseOut={e => e.target.style.transform = 'scale(1)'}
+              onMouseOver={e => (e.target.style.transform = 'scale(1.05)')}
+              onMouseOut={e => (e.target.style.transform = 'scale(1)')}
             >
               Upload CSV
             </label>
-            <input 
-              type="file" 
-              id="csvUpload" 
-              style={{ display: 'none' }} 
-              accept=".csv" 
-              onChange={(e) => {
-                if(e.target.files && e.target.files.length > 0) {
+            <input
+              type="file"
+              id="csvUpload"
+              style={{ display: 'none' }}
+              accept=".csv"
+              onChange={e => {
+                if (e.target.files && e.target.files.length > 0) {
                   handleFiles(e.target.files);
                 }
               }}
             />
             {uploadMessage && (
-              <p style={{ color: 'green', marginTop: '10px', fontWeight:'bold' }}>
+              <p style={{ color: 'green', marginTop: '10px', fontWeight: 'bold' }}>
                 {uploadMessage}
               </p>
             )}
           </div>
 
-          <div style={{marginBottom:'20px'}}>
-            <button 
-              onClick={() => setUseHeadline3(true)} 
+          {/* Butoane (Headline3, CallAsset, Sitelinks) */}
+          <div style={{ marginBottom: '20px' }}>
+            <button
+              onClick={() => setUseHeadline3(true)}
               style={{
-                padding: '10px 20px', 
-                cursor: 'pointer', 
+                padding: '10px 20px',
+                cursor: 'pointer',
                 background: useHeadline3 ? '#007BFF' : '#777',
                 color: '#fff',
                 border: 'none',
                 borderRadius: '20px',
-                marginRight:'10px',
+                marginRight: '10px',
                 fontWeight: 'bold'
               }}
             >
               With Headline 3
             </button>
 
-            <button 
-              onClick={() => setUseHeadline3(false)} 
+            <button
+              onClick={() => setUseHeadline3(false)}
               style={{
-                padding: '10px 20px', 
-                cursor: 'pointer', 
+                padding: '10px 20px',
+                cursor: 'pointer',
                 background: !useHeadline3 ? '#007BFF' : '#777',
                 color: '#fff',
                 border: 'none',
                 borderRadius: '20px',
                 fontWeight: 'bold',
-                marginRight:'10px'
+                marginRight: '10px'
               }}
             >
               Without Headline 3
             </button>
 
-            <button 
-              onClick={() => setUseCallAsset(!useCallAsset)} 
+            <button
+              onClick={() => setUseCallAsset(!useCallAsset)}
               style={{
-                padding: '10px 20px', 
-                cursor: 'pointer', 
+                padding: '10px 20px',
+                cursor: 'pointer',
                 background: useCallAsset ? '#007BFF' : '#777',
                 color: '#fff',
                 border: 'none',
                 borderRadius: '20px',
                 fontWeight: 'bold',
-                marginRight:'10px'
+                marginRight: '10px'
               }}
             >
               {useCallAsset ? 'With Call Asset' : 'Without Call Asset'}
@@ -402,12 +427,31 @@ function App({ user }) {
             </button>
           </div>
 
-          <button 
-            onClick={generateAds} 
+          {/* Toggler Include Display Ads (fără afișarea altor butoane) */}
+          <div style={{ marginBottom: '20px' }}>
+            <button
+              onClick={() => setIncludeDisplayAds(!includeDisplayAds)}
+              style={{
+                padding: '10px 20px',
+                cursor: 'pointer',
+                background: includeDisplayAds ? '#007BFF' : '#777',
+                color: '#fff',
+                border: 'none',
+                borderRadius: '20px',
+                fontWeight: 'bold'
+              }}
+            >
+              {includeDisplayAds ? 'Exclude Display Ads' : 'Include Display Ads'}
+            </button>
+          </div>
+
+          {/* Buton Generate Ads */}
+          <button
+            onClick={generateAds}
             style={{
-              padding: '14px 28px', 
-              fontSize: '16px', 
-              cursor: 'pointer', 
+              padding: '14px 28px',
+              fontSize: '16px',
+              cursor: 'pointer',
               background: '#007BFF',
               color: '#fff',
               border: 'none',
@@ -428,16 +472,19 @@ function App({ user }) {
             Generate 10 Random Ads
           </button>
 
+          {/* Link-ul de preview generat */}
           {previewLink && (
             <div style={{ marginTop: '20px' }}>
-              <p style={{color:'#333', marginBottom:'10px'}}>
+              <p style={{ color: '#333', marginBottom: '10px' }}>
                 Your preview link:
               </p>
-              <p style={{
-                color:'#333',
-                marginBottom:'10px',
-                wordBreak:'break-all'
-              }}>
+              <p
+                style={{
+                  color: '#333',
+                  marginBottom: '10px',
+                  wordBreak: 'break-all'
+                }}
+              >
                 {previewLink}
               </p>
               <button
@@ -462,8 +509,8 @@ function App({ user }) {
         </div>
       </div>
 
-      {/* Afișează reclamele generate */}
-      <div style={{maxWidth: '1400px', margin:'0 auto', padding: '0 20px', marginBottom:'40px'}}>
+      {/* AdsList (preview local) */}
+      <div style={{ maxWidth: '1400px', margin: '0 auto', padding: '0 20px', marginBottom: '40px' }}>
         <AdsList ads={generatedAds} />
       </div>
     </div>

@@ -9,7 +9,10 @@ function InputForm({
   clientLink, setClientLink,
   phoneNumber, setPhoneNumber,
   sitelinks, setSitelinks,
-  useSitelinks
+  useSitelinks,
+  // ADDED: Primim și setăm linkul către spreadsheet
+  adCopySpreadsheetLink, // ADDED
+  setAdCopySpreadsheetLink // ADDED
 }) {
 
   const handleSitelinkChange = (index, field, value) => {
@@ -33,7 +36,7 @@ function InputForm({
     marginBottom: '10px',
     transition: 'box-shadow 0.3s',
     outline: 'none',
-    fontFamily:'inherit',
+    fontFamily: 'inherit',
   };
 
   const handleFocus = (e) => {
@@ -141,6 +144,22 @@ function InputForm({
           onBlur={handleBlur}
         />
       </div>
+
+      {/* ADDED: câmpul Ad Copy Spreadsheet */}
+      <div style={{ gridColumn: '1 / span 2', display: 'flex', flexDirection: 'column' }}>
+        <label htmlFor="adCopySpreadsheetLink" style={labelStyle}>Ad Copy Spreadsheet</label>
+        <input
+          id="adCopySpreadsheetLink"
+          type="text"
+          placeholder="e.g. https://docs.google.com/spreadsheets/d/..."
+          value={adCopySpreadsheetLink}
+          onChange={(e) => setAdCopySpreadsheetLink(e.target.value)}
+          style={inputStyle}
+          onFocus={handleFocus}
+          onBlur={handleBlur}
+        />
+      </div>
+      {/* END ADDED */}
 
       {/* ============== SITELINKS ============== */}
       {useSitelinks && (

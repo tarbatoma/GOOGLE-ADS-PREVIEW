@@ -1,23 +1,43 @@
+// PreviewPage.js
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "./firebase";
-
-// Font Awesome, dacă îl folosești
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPhone } from '@fortawesome/free-solid-svg-icons';
 
+const displayAdImages = [
+  { src: require('./assets/displayAds/NH-120x600-px.gif'), alt: '120x600' },
+  { src: require('./assets/displayAds/NH-160x600-px.gif'), alt: '160x600' },
+  { src: require('./assets/displayAds/NH-200x200-px.gif'), alt: '200x200' },
+  { src: require('./assets/displayAds/NH-250x250-px.gif'), alt: '250x250' },
+  { src: require('./assets/displayAds/NH-300x50-px.gif'), alt: '300x50' },
+  { src: require('./assets/displayAds/NH-300x250-px.gif'), alt: '300x250' },
+  { src: require('./assets/displayAds/NH-300x600-px.gif'), alt: '300x600' },
+  { src: require('./assets/displayAds/NH-320x50-px.gif'), alt: '320x50' },
+  { src: require('./assets/displayAds/NH-320x100-px.gif'), alt: '320x100' },
+  { src: require('./assets/displayAds/NH-336x280-px.gif'), alt: '336x280' },
+  { src: require('./assets/displayAds/NH-468x60-px.gif'), alt: '468x60' },
+  { src: require('./assets/displayAds/NH-728x90-px.gif'), alt: '728x90' },
+  { src: require('./assets/displayAds/NH-970x90-px.gif'), alt: '970x90' },
+  { src: require('./assets/displayAds/NH-970x250-px.gif'), alt: '970x250' },
+];
 function PreviewPage() {
   const { id } = useParams();
-  const [ads, setAds] = useState(null);
+  const [ads, setAds] = useState([]);
+  const [includeDisplayAds, setIncludeDisplayAds] = useState(false);
+
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(true);
 
-  // Desktop vs. Mobile
+  // Desktop vs. Mobile vs. Display Ads vs. AdPositionExamples
   const [viewMode, setViewMode] = useState('desktop');
 
+  // Linkul de la Ad Copy Spreadsheet (dacă există)
+  const [adCopySpreadsheetLink, setAdCopySpreadsheetLink] = useState('');
+
   useEffect(() => {
-    const fetchAds = async () => {
+    const fetchData = async () => {
       try {
         const docRef = doc(db, "adsPreviews", id);
         const docSnap = await getDoc(docRef);
@@ -36,16 +56,24 @@ function PreviewPage() {
           return;
         }
 
-        setAds(data.ads);
+        // Anunțuri
+        setAds(data.ads || []);
+        // Include Display Ads?
+        setIncludeDisplayAds(data.includeDisplayAds || false);
+        // Ad Copy Link
+        if (data.adCopySpreadsheetLink) {
+          setAdCopySpreadsheetLink(data.adCopySpreadsheetLink);
+        }
+
         setLoading(false);
-      } catch (e) {
-        console.error(e);
+      } catch (err) {
+        console.error(err);
         setError("Failed to fetch data.");
         setLoading(false);
       }
     };
 
-    fetchAds();
+    fetchData();
   }, [id]);
 
   if (loading) {
@@ -64,8 +92,16 @@ function PreviewPage() {
     );
   }
 
-  // -------------- DESKTOP LAYOUT --------------
-  function renderDesktopView() {
+  // Fallback dacă nu există ads
+  const NoAdsMessage = () => (
+    <p style={{ textAlign:'center', color:'#fff', fontStyle:'italic', marginTop:'20px' }}>
+      No ads generated.
+    </p>
+  );
+
+  // -------------- RENDER DESKTOP ----------------
+  const renderDesktopView = () => {
+    if (!ads || ads.length === 0) return <NoAdsMessage />;
     return (
       <div style={{ display:'flex', flexDirection:'column', gap:'40px' }}>
         {ads.map((ad, idx) => (
@@ -90,14 +126,13 @@ function PreviewPage() {
               e.currentTarget.style.boxShadow = '0 1px 3px rgba(0,0,0,0.1)';
             }}
           >
-            {/* Simulare Google header */}
+            {/* "Google" */}
             <div style={{ marginBottom:'15px', textAlign:'center' }}>
-              {/* "Google" colorat */}
-              <h2 style={{ 
-                margin:'0 0 10px', 
-                fontSize:'30px', 
+              <h2 style={{
+                margin:'0 0 10px',
+                fontSize:'30px',
                 fontFamily:'Arial,sans-serif',
-                letterSpacing:'0.5px' 
+                letterSpacing:'0.5px'
               }}>
                 <span style={{ color:'#4285F4' }}>G</span>
                 <span style={{ color:'#DB4437' }}>o</span>
@@ -106,8 +141,6 @@ function PreviewPage() {
                 <span style={{ color:'#0F9D58' }}>l</span>
                 <span style={{ color:'#DB4437' }}>e</span>
               </h2>
-
-              {/* Bara de căutare dummy */}
               <div style={{
                 display:'flex',
                 justifyContent:'center',
@@ -125,15 +158,12 @@ function PreviewPage() {
                   alignItems:'center',
                   padding:'0 15px'
                 }}>
-                  <span style={{ color:'#aaa', fontSize:'14px' }}>
-                    Search...
-                  </span>
+                  <span style={{ color:'#aaa', fontSize:'14px' }}>Search...</span>
                 </div>
               </div>
             </div>
-            {/* /Simulare Google header */}
+            {/* /"Google" */}
 
-            {/* Conținut anunț */}
             <div style={{ fontSize:'12px', color:'#5f6368', marginBottom:'5px' }}>
               Sponsored
             </div>
@@ -159,24 +189,13 @@ function PreviewPage() {
             }}>
               {[ad.h1, ad.h2, ad.h3].filter(Boolean).join(' | ')}
             </h3>
-            <p style={{
-              fontSize:'14px',
-              margin:'0 0 5px',
-              color:'#202124',
-              lineHeight:'1.4'
-            }}>
+            <p style={{ fontSize:'14px', margin:'0 0 5px', color:'#202124', lineHeight:'1.4' }}>
               {ad.d1}
             </p>
-            <p style={{
-              fontSize:'14px',
-              margin:'0',
-              color:'#202124',
-              lineHeight:'1.4'
-            }}>
+            <p style={{ fontSize:'14px', margin:'0', color:'#202124', lineHeight:'1.4' }}>
               {ad.d2}
             </p>
 
-            {/* Call asset */}
             {ad.phoneNumber && (
               <p style={{
                 fontSize:'14px',
@@ -221,14 +240,15 @@ function PreviewPage() {
         ))}
       </div>
     );
-  }
+  };
 
-  // -------------- MOBILE LAYOUT --------------
-  function renderMobileView() {
+  // -------------- RENDER MOBILE --------------
+  const renderMobileView = () => {
+    if (!ads || ads.length === 0) return <NoAdsMessage />;
     return (
       <div style={{ display:'flex', flexDirection:'column', gap:'40px' }}>
         {ads.map((ad, idx) => (
-          <div 
+          <div
             key={idx}
             style={{
               background:'#fff',
@@ -237,10 +257,18 @@ function PreviewPage() {
               marginBottom:'20px',
               padding:'10px',
               boxShadow:'0 1px 3px rgba(0,0,0,0.1)',
-              transition:'transform 0.2s, boxShadow 0.2s'
+              transition:'transform 0.2s, box-shadow 0.2s'
+            }}
+            onMouseOver={e => {
+              e.currentTarget.style.transform = 'translateY(-2px)';
+              e.currentTarget.style.boxShadow = '0 2px 8px rgba(0,0,0,0.15)';
+            }}
+            onMouseOut={e => {
+              e.currentTarget.style.transform = 'translateY(0)';
+              e.currentTarget.style.boxShadow = '0 1px 3px rgba(0,0,0,0.1)';
             }}
           >
-            {/* Simulare "Mobile Google" */}
+            {/* Mobile Google */}
             <div style={{ marginBottom:'10px', textAlign:'center' }}>
               <h2 style={{
                 margin:'0 0 5px',
@@ -271,13 +299,11 @@ function PreviewPage() {
                   alignItems:'center',
                   padding:'0 10px'
                 }}>
-                  <span style={{ color:'#aaa', fontSize:'14px' }}>
-                    Search...
-                  </span>
+                  <span style={{ color:'#aaa', fontSize:'14px' }}>Search...</span>
                 </div>
               </div>
             </div>
-            {/* /Simulare "Mobile Google" */}
+            {/* /Mobile Google */}
 
             <div style={{ fontSize:'12px', color:'#5f6368', marginBottom:'5px' }}>
               Sponsored
@@ -362,7 +388,64 @@ function PreviewPage() {
         ))}
       </div>
     );
-  }
+  };
+
+  // -------------- RENDER DISPLAY ADS --------------
+  const renderDisplayAds = () => (
+    <div style={{
+      display:'flex',
+      flexWrap:'wrap',
+      gap:'20px',
+      justifyContent:'center',
+      marginTop:'20px'
+    }}>
+      {displayAdImages.map((item, i) => (
+        <div key={i} style={{ textAlign:'center' }}>
+          <img
+            src={item.src}
+            alt={item.alt}
+            style={{
+              maxWidth:'100%',
+              height:'auto',
+              border:'1px solid #ccc',
+              background:'#fff',
+              borderRadius:'8px',
+              boxShadow:'0 2px 6px rgba(0,0,0,0.2)'
+            }}
+          />
+          <p style={{ color:'#fff', marginTop:'5px' }}>
+            {item.alt}px
+          </p>
+        </div>
+      ))}
+    </div>
+  );
+
+  // -------------- RENDER AD POSITION EXAMPLES --------------
+  const renderAdPositionExamples = () => (
+    <div style={{ color:'#fff', textAlign:'center', marginTop:'20px' }}>
+      <h3 style={{ margin:'0 0 10px' }}>Display Ad Position Examples</h3>
+      <p>Here you can show screenshots about how/where display ads appear.</p>
+    </div>
+  );
+
+  // ------------------------------------------------
+  // COMPUNEM TOTUL ÎNTR-UN SELECTOR
+  // ------------------------------------------------
+  const renderContent = () => {
+    switch (viewMode) {
+      case 'desktop':
+        return renderDesktopView();
+      case 'mobile':
+        return renderMobileView();
+      case 'displayAds':
+        return includeDisplayAds ? renderDisplayAds() : null;
+      case 'adPositionExamples':
+        return includeDisplayAds ? renderAdPositionExamples() : null;
+      default:
+        return renderDesktopView();
+    }
+  };
 
   return (
     <div
@@ -375,7 +458,7 @@ function PreviewPage() {
       }}
     >
       <div style={{ textAlign:'center', marginBottom:'30px' }}>
-        <h2 style={{ 
+        <h2 style={{
           margin:'0 0 10px',
           color:'#fff',
           fontSize:'2em',
@@ -384,54 +467,114 @@ function PreviewPage() {
         }}>
           Preview Ads
         </h2>
-        {/* Butoane Desktop/Mobile */}
-        <div>
-          <button 
-            onClick={() => setViewMode('desktop')}
-            style={{
-              padding:'10px 20px',
-              cursor:'pointer',
-              background: viewMode === 'desktop' ? '#007BFF' : '#777',
-              color:'#fff',
-              border:'none',
-              borderRadius:'20px',
-              fontWeight:'bold',
-              marginRight:'10px'
-            }}
-          >
-            Desktop View
-          </button>
-          <button 
-            onClick={() => setViewMode('mobile')}
-            style={{
-              padding:'10px 20px',
-              cursor:'pointer',
-              background: viewMode === 'mobile' ? '#007BFF' : '#777',
-              color:'#fff',
-              border:'none',
-              borderRadius:'20px',
-              fontWeight:'bold'
-            }}
-          >
-            Mobile View
-          </button>
-        </div>
       </div>
 
-      {/* Container ads */}
+      {/* Link Ad Copy Spreadsheet, dacă există */}
+      {adCopySpreadsheetLink && (
+        <div style={{
+          marginBottom: '20px',
+          color: '#fff',
+          textAlign: 'center',
+          fontSize:'16px'
+        }}>
+          <strong>Ad Copy Spreadsheet Link: </strong>
+          <a
+            href={adCopySpreadsheetLink}
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{ color: '#61dafb' }}
+          >
+            {adCopySpreadsheetLink}
+          </a>
+        </div>
+      )}
+
+      {/* Butoane de View Mode */}
+      <div style={{ textAlign:'center', marginBottom:'20px' }}>
+        <button
+          onClick={() => setViewMode('desktop')}
+          style={{
+            padding:'10px 20px',
+            cursor:'pointer',
+            background: viewMode === 'desktop' ? '#007BFF' : '#777',
+            color:'#fff',
+            border:'none',
+            borderRadius:'20px',
+            fontWeight:'bold',
+            marginRight:'10px'
+          }}
+        >
+          Desktop View
+        </button>
+        <button
+          onClick={() => setViewMode('mobile')}
+          style={{
+            padding:'10px 20px',
+            cursor:'pointer',
+            background: viewMode === 'mobile' ? '#007BFF' : '#777',
+            color:'#fff',
+            border:'none',
+            borderRadius:'20px',
+            fontWeight:'bold'
+          }}
+        >
+          Mobile View
+        </button>
+
+        {/* 
+          Afișăm butoanele Display Ads doar dacă s-a selectat 
+          "Include Display Ads" în App.js (citeam din Firestore)
+        */}
+        {includeDisplayAds && (
+          <>
+            <button
+              onClick={() => setViewMode('displayAds')}
+              style={{
+                padding:'10px 20px',
+                cursor:'pointer',
+                background: viewMode === 'displayAds' ? '#007BFF' : '#777',
+                color:'#fff',
+                border:'none',
+                borderRadius:'20px',
+                fontWeight:'bold',
+                marginLeft:'10px',
+                marginRight:'10px'
+              }}
+            >
+              Display Ads
+            </button>
+            <button
+              onClick={() => setViewMode('adPositionExamples')}
+              style={{
+                padding:'10px 20px',
+                cursor:'pointer',
+                background: viewMode === 'adPositionExamples' ? '#007BFF' : '#777',
+                color:'#fff',
+                border:'none',
+                borderRadius:'20px',
+                fontWeight:'bold'
+              }}
+            >
+              Display Ad Position Examples
+            </button>
+          </>
+        )}
+      </div>
+
+      {/* Containerul pt. anunțurile generate */}
       <div style={{
-        maxWidth: viewMode === 'desktop' ? '800px' : '375px',
+        maxWidth:
+          viewMode === 'desktop' ? '800px'
+          : viewMode === 'mobile' ? '375px'
+          : '1000px',
         margin:'0 auto',
-        background: viewMode === 'desktop' ? 'transparent' : '#f8f9fa',
+        background: viewMode === 'mobile' ? '#f8f9fa' : 'transparent',
         border: viewMode === 'mobile' ? '1px solid #ccc' : 'none',
         borderRadius: viewMode === 'mobile' ? '20px' : '0px',
         boxShadow: viewMode === 'mobile' ? '0 5px 15px rgba(0,0,0,0.2)' : 'none',
         padding: viewMode === 'mobile' ? '20px' : '0'
       }}>
-        {viewMode === 'desktop' 
-          ? renderDesktopView() 
-          : renderMobileView()
-        }
+        {renderContent()}
       </div>
     </div>
   );

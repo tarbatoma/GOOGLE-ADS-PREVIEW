@@ -504,7 +504,7 @@ function PreviewPage() {
             marginRight:'10px'
           }}
         >
-          Desktop View
+          Search Ads Desktop View
         </button>
         <button
           onClick={() => setViewMode('mobile')}
@@ -518,12 +518,12 @@ function PreviewPage() {
             fontWeight:'bold'
           }}
         >
-          Mobile View
+          Search Ads Mobile View
         </button>
 
         {/* 
           Afișăm butoanele Display Ads doar dacă s-a selectat 
-          "Include Display Ads" în App.js (citeam din Firestore)
+          "Include Display Ads" în App.js (citim din Firestore)
         */}
         {includeDisplayAds && (
           <>

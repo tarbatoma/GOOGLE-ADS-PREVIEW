@@ -441,7 +441,7 @@ function App({ user }) {
                 fontWeight: 'bold'
               }}
             >
-              {includeDisplayAds ? 'Exclude Display Ads' : 'Include Display Ads'}
+              {includeDisplayAds ? 'With Display Ads' : 'Without Display Ads'}
             </button>
           </div>
 

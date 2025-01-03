@@ -7,20 +7,20 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPhone } from '@fortawesome/free-solid-svg-icons';
 
 const displayAdImages = [
-  { src: require('./assets/displayAds/NH-120x600-px.gif'), alt: '120x600' },
-  { src: require('./assets/displayAds/NH-160x600-px.gif'), alt: '160x600' },
-  { src: require('./assets/displayAds/NH-200x200-px.gif'), alt: '200x200' },
-  { src: require('./assets/displayAds/NH-250x250-px.gif'), alt: '250x250' },
-  { src: require('./assets/displayAds/NH-300x50-px.gif'), alt: '300x50' },
-  { src: require('./assets/displayAds/NH-300x250-px.gif'), alt: '300x250' },
-  { src: require('./assets/displayAds/NH-300x600-px.gif'), alt: '300x600' },
-  { src: require('./assets/displayAds/NH-320x50-px.gif'), alt: '320x50' },
-  { src: require('./assets/displayAds/NH-320x100-px.gif'), alt: '320x100' },
-  { src: require('./assets/displayAds/NH-336x280-px.gif'), alt: '336x280' },
-  { src: require('./assets/displayAds/NH-468x60-px.gif'), alt: '468x60' },
-  { src: require('./assets/displayAds/NH-728x90-px.gif'), alt: '728x90' },
-  { src: require('./assets/displayAds/NH-970x90-px.gif'), alt: '970x90' },
-  { src: require('./assets/displayAds/NH-970x250-px.gif'), alt: '970x250' },
+  { src: require('./assets/displayAds/NH-120by600-px.gif'), alt: '120x600' },
+  { src: require('./assets/displayAds/NH-160by600-px.gif'), alt: '160x600' },
+  { src: require('./assets/displayAds/NH-200by200-px.gif'), alt: '200x200' },
+  { src: require('./assets/displayAds/NH-250by250-px.gif'), alt: '250x250' },
+  { src: require('./assets/displayAds/NH-300by50-px.gif'), alt: '300x50' },
+  { src: require('./assets/displayAds/NH-300by250-px.gif'), alt: '300x250' },
+  { src: require('./assets/displayAds/NH-300by600-px.gif'), alt: '300x600' },
+  { src: require('./assets/displayAds/NH-320by50-px.gif'), alt: '320x50' },
+  { src: require('./assets/displayAds/NH-320by100-px.gif'), alt: '320x100' },
+  { src: require('./assets/displayAds/NH-336by280-px.gif'), alt: '336x280' },
+  { src: require('./assets/displayAds/NH-468by60-px.gif'), alt: '468x60' },
+  { src: require('./assets/displayAds/NH-728by90-px.gif'), alt: '728x90' },
+  { src: require('./assets/displayAds/NH-970by90-px.gif'), alt: '970x90' },
+  { src: require('./assets/displayAds/NH-970by250-px.gif'), alt: '970x250' },
 ];
 function PreviewPage() {
   const { id } = useParams();

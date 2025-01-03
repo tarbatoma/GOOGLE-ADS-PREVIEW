@@ -22,6 +22,19 @@ const displayAdImages = [
   { src: require('./assets/displayAds/NH-970by90-px.gif'), alt: '970x90' },
   { src: require('./assets/displayAds/NH-970by250-px.gif'), alt: '970x250' },
 ];
+
+// ADDED: array pentru screenshot-urile „Display Ad Position Examples”
+const displayAdPositions = [
+  { src: require('./assets/displayAdsPreview/1.jpg'), alt: 'Position Example 1' },
+  { src: require('./assets/displayAdsPreview/2.jpg'), alt: 'Position Example 2' },
+  { src: require('./assets/displayAdsPreview/3.jpg'), alt: 'Position Example 3' },
+  { src: require('./assets/displayAdsPreview/4.jpg'), alt: 'Position Example 4' },
+  { src: require('./assets/displayAdsPreview/5.jpg'), alt: 'Position Example 5' },
+  { src: require('./assets/displayAdsPreview/6.jpg'), alt: 'Position Example 6' },
+  { src: require('./assets/displayAdsPreview/7.jpg'), alt: 'Position Example 7' },
+];
+
+
 function PreviewPage() {
   const { id } = useParams();
   const [ads, setAds] = useState([]);
@@ -422,13 +435,46 @@ function PreviewPage() {
   );
 
   // -------------- RENDER AD POSITION EXAMPLES --------------
-  const renderAdPositionExamples = () => (
-    <div style={{ color:'#fff', textAlign:'center', marginTop:'20px' }}>
-      <h3 style={{ margin:'0 0 10px' }}>Display Ad Position Examples</h3>
-      <p>Here you can show screenshots about how/where display ads appear.</p>
-    </div>
-  );
-
+  const renderAdPositionExamples = () => {
+    return (
+      <div 
+        style={{
+          display: 'flex',
+          flexDirection: 'column',  // imagini pe rânduri
+          alignItems: 'center',
+          gap: '40px',
+          marginTop: '20px'
+        }}
+      >
+        {displayAdPositions.map((item, i) => (
+          <div 
+            key={i} 
+            style={{ 
+              textAlign: 'center',
+              width: '100%',
+              maxWidth: '900px', // poți crește/diminua
+              margin: '0 auto'
+            }}
+          >
+            <img 
+              src={item.src} 
+              alt={item.alt} 
+              style={{
+                width: '100%',
+                height: 'auto',
+                border: '1px solid #ccc',
+                background: '#fff',
+                borderRadius: '8px',
+                boxShadow: '0 2px 6px rgba(0,0,0,0.2)'
+              }}
+            />
+            {/* Textul a fost eliminat */}
+          </div>
+        ))}
+      </div>
+    );
+  };
+  
   // ------------------------------------------------
   // COMPUNEM TOTUL ÎNTR-UN SELECTOR
   // ------------------------------------------------

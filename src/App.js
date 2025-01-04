@@ -361,8 +361,17 @@ function App({ user }) {
             )}
           </div>
 
-          {/* Butoane (Headline3, CallAsset, Sitelinks) */}
-          <div style={{ marginBottom: '20px' }}>
+          {/* Grup de butoane (Headline3, CallAsset, Sitelinks) pe un singur rând cu wrap */}
+          <div 
+            style={{ 
+              marginBottom: '20px',
+              display: 'flex',
+              flexWrap: 'wrap',   // permite trecerea pe rând nou la nevoie
+              gap: '10px',
+              justifyContent: 'center',
+              alignItems: 'center'
+            }}
+          >
             <button
               onClick={() => setUseHeadline3(true)}
               style={{
@@ -372,7 +381,6 @@ function App({ user }) {
                 color: '#fff',
                 border: 'none',
                 borderRadius: '20px',
-                marginRight: '10px',
                 fontWeight: 'bold'
               }}
             >
@@ -388,8 +396,7 @@ function App({ user }) {
                 color: '#fff',
                 border: 'none',
                 borderRadius: '20px',
-                fontWeight: 'bold',
-                marginRight: '10px'
+                fontWeight: 'bold'
               }}
             >
               Without Headline 3
@@ -404,8 +411,7 @@ function App({ user }) {
                 color: '#fff',
                 border: 'none',
                 borderRadius: '20px',
-                fontWeight: 'bold',
-                marginRight: '10px'
+                fontWeight: 'bold'
               }}
             >
               {useCallAsset ? 'With Call Asset' : 'Without Call Asset'}
@@ -427,8 +433,17 @@ function App({ user }) {
             </button>
           </div>
 
-          {/* Toggler Include Display Ads (fără afișarea altor butoane) */}
-          <div style={{ marginBottom: '20px' }}>
+          {/* Toggler Include Display Ads */}
+          <div 
+            style={{ 
+              marginBottom: '20px',
+              display: 'flex',
+              flexWrap: 'wrap',
+              gap: '10px',
+              justifyContent: 'center',
+              alignItems: 'center'
+            }}
+          >
             <button
               onClick={() => setIncludeDisplayAds(!includeDisplayAds)}
               style={{

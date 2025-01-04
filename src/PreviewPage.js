@@ -34,19 +34,17 @@ const displayAdPositions = [
   { src: require('./assets/displayAdsPreview/7.jpg'), alt: 'Position Example 7' },
 ];
 
-
 function PreviewPage() {
   const { id } = useParams();
   const [ads, setAds] = useState([]);
   const [includeDisplayAds, setIncludeDisplayAds] = useState(false);
-
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(true);
 
-  // Desktop vs. Mobile vs. Display Ads vs. AdPositionExamples
+  // 'desktop', 'mobile', 'displayAds', 'adPositionExamples'
   const [viewMode, setViewMode] = useState('desktop');
 
-  // Linkul de la Ad Copy Spreadsheet (dacă există)
+  // Link Ad Copy Spreadsheet
   const [adCopySpreadsheetLink, setAdCopySpreadsheetLink] = useState('');
 
   useEffect(() => {
@@ -63,21 +61,19 @@ function PreviewPage() {
 
         const data = docSnap.data();
         const now = Date.now();
+
         if (!data.expiresAt || now > data.expiresAt) {
           setError("This link has expired.");
           setLoading(false);
           return;
         }
 
-        // Anunțuri
         setAds(data.ads || []);
-        // Include Display Ads?
         setIncludeDisplayAds(data.includeDisplayAds || false);
-        // Ad Copy Link
+
         if (data.adCopySpreadsheetLink) {
           setAdCopySpreadsheetLink(data.adCopySpreadsheetLink);
         }
-
         setLoading(false);
       } catch (err) {
         console.error(err);
@@ -112,9 +108,12 @@ function PreviewPage() {
     </p>
   );
 
-  // -------------- RENDER DESKTOP ----------------
+  // ------------------------------------------------
+  // DESKTOP VIEW (la fel ca înainte)
+  // ------------------------------------------------
   const renderDesktopView = () => {
     if (!ads || ads.length === 0) return <NoAdsMessage />;
+
     return (
       <div style={{ display:'flex', flexDirection:'column', gap:'40px' }}>
         {ads.map((ad, idx) => (
@@ -126,9 +125,10 @@ function PreviewPage() {
               borderRadius:'8px',
               boxShadow:'0 1px 3px rgba(0,0,0,0.1)',
               padding:'20px',
-              transition:'transform 0.2s, box-shadow 0.2s',
+              transition:'transform 0.2s, boxShadow 0.2s',
               cursor:'default',
               position:'relative',
+              fontFamily:'Arial, sans-serif'
             }}
             onMouseOver={e => {
               e.currentTarget.style.transform = 'translateY(-2px)';
@@ -139,7 +139,7 @@ function PreviewPage() {
               e.currentTarget.style.boxShadow = '0 1px 3px rgba(0,0,0,0.1)';
             }}
           >
-            {/* "Google" */}
+            {/* Google & Search Bar */}
             <div style={{ marginBottom:'15px', textAlign:'center' }}>
               <h2 style={{
                 margin:'0 0 10px',
@@ -161,35 +161,60 @@ function PreviewPage() {
                 gap:'10px'
               }}>
                 <div style={{
-                  flex:'0 0 500px',
-                  maxWidth:'500px',
+                  width:'500px',
                   height:'35px',
                   border:'1px solid #ddd',
                   borderRadius:'20px',
                   background:'#fff',
                   display:'flex',
                   alignItems:'center',
-                  padding:'0 15px'
+                  padding:'0 15px',
+                  maxWidth:'100%'
                 }}>
-                  <span style={{ color:'#aaa', fontSize:'14px' }}>Search...</span>
+                  <span style={{ color:'#aaa', fontSize:'14px' }}>
+                    Search...
+                  </span>
                 </div>
               </div>
             </div>
-            {/* /"Google" */}
+            {/* /Google & Search Bar */}
 
-            <div style={{ fontSize:'12px', color:'#5f6368', marginBottom:'5px' }}>
-              Sponsored
+            {/* Sponsored */}
+            <div style={{ marginBottom:'5px' }}>
+              <span style={{ fontSize:'12px', color:'#5f6368' }}>
+                Sponsored
+              </span>
             </div>
+
+            {/* Bulina + link */}
             <div style={{
-              fontSize:'14px',
-              color:'#006621',
-              marginBottom:'5px',
-              whiteSpace:'nowrap',
-              overflow:'hidden',
-              textOverflow:'ellipsis'
+              display:'flex', 
+              alignItems:'center', 
+              gap:'8px',
+              marginBottom:'8px'
             }}>
-              {ad.link}
+              <div 
+                style={{
+                  width:'20px',
+                  height:'20px',
+                  borderRadius:'50%',
+                  background:'#eee'
+                }}
+              />
+              <span 
+                style={{
+                  fontSize:'14px',
+                  color:'#006621',
+                  overflow:'hidden',
+                  textOverflow:'ellipsis',
+                  whiteSpace:'nowrap'
+                }}
+              >
+                {ad.link}
+              </span>
             </div>
+
+            {/* HEADLINES + DESCRIPTIONS */}
             <h3 style={{
               fontSize:'18px',
               margin:'0 0 10px',
@@ -202,13 +227,24 @@ function PreviewPage() {
             }}>
               {[ad.h1, ad.h2, ad.h3].filter(Boolean).join(' | ')}
             </h3>
-            <p style={{ fontSize:'14px', margin:'0 0 5px', color:'#202124', lineHeight:'1.4' }}>
+            <p style={{
+              fontSize:'14px',
+              margin:'0 0 5px',
+              color:'#202124',
+              lineHeight:'1.4'
+            }}>
               {ad.d1}
             </p>
-            <p style={{ fontSize:'14px', margin:'0', color:'#202124', lineHeight:'1.4' }}>
+            <p style={{
+              fontSize:'14px',
+              margin:'0',
+              color:'#202124',
+              lineHeight:'1.4'
+            }}>
               {ad.d2}
             </p>
 
+            {/* Call asset */}
             {ad.phoneNumber && (
               <p style={{
                 fontSize:'14px',
@@ -225,7 +261,7 @@ function PreviewPage() {
               </p>
             )}
 
-            {/* Sitelinks */}
+            {/* SITELINKS */}
             {ad.sitelinks && ad.sitelinks.length > 0 && (
               <div style={{
                 marginTop:'10px',
@@ -241,7 +277,9 @@ function PreviewPage() {
                       color:'#1a0dab',
                       fontSize:'14px',
                       textDecoration:'none',
-                      whiteSpace:'nowrap'
+                      padding:'6px 12px',
+                      borderRadius:'30px',
+                      background:'#f0f0f0'
                     }}
                   >
                     {sl.title}
@@ -255,13 +293,16 @@ function PreviewPage() {
     );
   };
 
-  // -------------- RENDER MOBILE --------------
+  // ------------------------------------------------
+  // MOBILE VIEW cu ajustări dimensionale
+  // ------------------------------------------------
   const renderMobileView = () => {
     if (!ads || ads.length === 0) return <NoAdsMessage />;
+  
     return (
       <div style={{ display:'flex', flexDirection:'column', gap:'40px' }}>
         {ads.map((ad, idx) => (
-          <div
+          <div 
             key={idx}
             style={{
               background:'#fff',
@@ -270,7 +311,8 @@ function PreviewPage() {
               marginBottom:'20px',
               padding:'10px',
               boxShadow:'0 1px 3px rgba(0,0,0,0.1)',
-              transition:'transform 0.2s, box-shadow 0.2s'
+              transition:'transform 0.2s, boxShadow 0.2s',
+              fontFamily:'Arial, sans-serif'
             }}
             onMouseOver={e => {
               e.currentTarget.style.transform = 'translateY(-2px)';
@@ -281,7 +323,7 @@ function PreviewPage() {
               e.currentTarget.style.boxShadow = '0 1px 3px rgba(0,0,0,0.1)';
             }}
           >
-            {/* Mobile Google */}
+            {/* Mobile Google (rămâne la fel) */}
             <div style={{ marginBottom:'10px', textAlign:'center' }}>
               <h2 style={{
                 margin:'0 0 5px',
@@ -303,45 +345,70 @@ function PreviewPage() {
                 gap:'5px'
               }}>
                 <div style={{
-                  width:'250px',
+                  width:'100%',
+                  maxWidth:'250px',
                   height:'30px',
                   border:'1px solid #ddd',
                   borderRadius:'20px',
                   background:'#fff',
                   display:'flex',
                   alignItems:'center',
-                  padding:'0 10px'
+                  padding:'0 10px',
+                  margin:'0 auto'
                 }}>
-                  <span style={{ color:'#aaa', fontSize:'14px' }}>Search...</span>
+                  <span style={{ color:'#aaa', fontSize:'14px' }}>
+                    Search...
+                  </span>
                 </div>
               </div>
             </div>
             {/* /Mobile Google */}
-
-            <div style={{ fontSize:'12px', color:'#5f6368', marginBottom:'5px' }}>
-              Sponsored
+  
+            {/* Rând "Sponsored" */}
+            <div style={{ marginBottom:'5px' }}>
+              <span style={{ fontSize:'12px', color:'#5f6368' }}>
+                Sponsored
+              </span>
             </div>
+  
+            {/* Rând bulină + link */}
             <div style={{
-              fontSize:'13px',
-              color:'#006621',
-              marginBottom:'5px',
-              overflow:'hidden',
-              textOverflow:'ellipsis',
-              whiteSpace:'nowrap'
+              display:'flex', 
+              alignItems:'center', 
+              gap:'8px',
+              marginBottom:'8px'
             }}>
-              {ad.link}
+              <div 
+                style={{
+                  width:'20px',
+                  height:'20px',
+                  borderRadius:'50%',
+                  background:'#eee'
+                }}
+              />
+              <span 
+                style={{
+                  fontSize:'12px',
+                  color:'#006621',
+                  // Eliminăm whiteSpace:'nowrap' + textOverflow
+                }}
+              >
+                {ad.link}
+              </span>
             </div>
+  
+            {/* HEADLINE - fără ellipsis */}
             <h3 style={{
               fontSize:'16px',
               color:'#1a0dab',
               margin:'0 0 8px',
               lineHeight:'1.2',
-              overflow:'hidden',
-              textOverflow:'ellipsis',
-              whiteSpace:'nowrap'
+              // Eliminăm overflow/textOverflow/whiteSpace
             }}>
               {[ad.h1, ad.h2, ad.h3].filter(Boolean).join(' | ')}
             </h3>
+  
+            {/* DESCRIPTIONS - la fel, lăsăm să facă wrap */}
             <p style={{
               fontSize:'14px',
               margin:'0 0 5px',
@@ -358,7 +425,7 @@ function PreviewPage() {
             }}>
               {ad.d2}
             </p>
-
+  
             {/* Call asset */}
             {ad.phoneNumber && (
               <div style={{
@@ -373,14 +440,14 @@ function PreviewPage() {
                 <span style={{fontSize:'14px'}}>Call {ad.phoneNumber}</span>
               </div>
             )}
-
-            {/* Sitelinks */}
+  
+            {/* SITELINKS */}
             {ad.sitelinks && ad.sitelinks.length > 0 && (
               <div style={{
                 marginTop:'10px',
                 display:'flex',
-                flexDirection:'column',
-                gap:'5px'
+                flexWrap:'wrap',
+                gap:'8px'
               }}>
                 {ad.sitelinks.map((sl, i) => (
                   <a
@@ -389,7 +456,10 @@ function PreviewPage() {
                     style={{
                       color:'#1a0dab',
                       fontSize:'14px',
-                      textDecoration:'none'
+                      textDecoration:'none',
+                      padding:'6px 10px',
+                      borderRadius:'20px',
+                      background:'#f0f0f0'
                     }}
                   >
                     {sl.title}
@@ -402,8 +472,7 @@ function PreviewPage() {
       </div>
     );
   };
-
-  // -------------- RENDER DISPLAY ADS --------------
+  // Afișăm bannere (Display Ads)
   const renderDisplayAds = () => (
     <div style={{
       display:'flex',
@@ -434,50 +503,45 @@ function PreviewPage() {
     </div>
   );
 
-  // -------------- RENDER AD POSITION EXAMPLES --------------
-  const renderAdPositionExamples = () => {
-    return (
-      <div 
-        style={{
-          display: 'flex',
-          flexDirection: 'column',  // imagini pe rânduri
-          alignItems: 'center',
-          gap: '40px',
-          marginTop: '20px'
-        }}
-      >
-        {displayAdPositions.map((item, i) => (
-          <div 
-            key={i} 
-            style={{ 
-              textAlign: 'center',
+  // Afișăm screenshot-urile "Display Ad Position Examples"
+  const renderAdPositionExamples = () => (
+    <div 
+      style={{
+        display:'flex',
+        flexDirection:'column',
+        alignItems:'center',
+        gap:'40px',
+        marginTop:'20px'
+      }}
+    >
+      {displayAdPositions.map((item, i) => (
+        <div 
+          key={i} 
+          style={{ 
+            textAlign: 'center',
+            width: '100%',
+            maxWidth: '900px',
+            margin: '0 auto'
+          }}
+        >
+          <img 
+            src={item.src}
+            alt={item.alt}
+            style={{
               width: '100%',
-              maxWidth: '900px', // poți crește/diminua
-              margin: '0 auto'
+              height:'auto',
+              border:'1px solid #ccc',
+              background:'#fff',
+              borderRadius:'8px',
+              boxShadow:'0 2px 6px rgba(0,0,0,0.2)'
             }}
-          >
-            <img 
-              src={item.src} 
-              alt={item.alt} 
-              style={{
-                width: '100%',
-                height: 'auto',
-                border: '1px solid #ccc',
-                background: '#fff',
-                borderRadius: '8px',
-                boxShadow: '0 2px 6px rgba(0,0,0,0.2)'
-              }}
-            />
-            {/* Textul a fost eliminat */}
-          </div>
-        ))}
-      </div>
-    );
-  };
-  
-  // ------------------------------------------------
-  // COMPUNEM TOTUL ÎNTR-UN SELECTOR
-  // ------------------------------------------------
+          />
+        </div>
+      ))}
+    </div>
+  );
+
+  // RENDER principal, în funcție de viewMode
   const renderContent = () => {
     switch (viewMode) {
       case 'desktop':
@@ -515,7 +579,7 @@ function PreviewPage() {
         </h2>
       </div>
 
-      {/* Link Ad Copy Spreadsheet, dacă există */}
+      {/* Link spre Ad Copy Spreadsheet */}
       {adCopySpreadsheetLink && (
         <div style={{
           marginBottom: '20px',
@@ -535,8 +599,17 @@ function PreviewPage() {
         </div>
       )}
 
-      {/* Butoane de View Mode */}
-      <div style={{ textAlign:'center', marginBottom:'20px' }}>
+      {/* Butoane Desktop / Mobile / Display Ads */}
+      <div 
+        style={{
+          textAlign:'center', 
+          marginBottom:'20px', 
+          display:'flex',
+          flexWrap:'wrap',
+          gap:'10px',
+          justifyContent:'center'
+        }}
+      >
         <button
           onClick={() => setViewMode('desktop')}
           style={{
@@ -546,8 +619,7 @@ function PreviewPage() {
             color:'#fff',
             border:'none',
             borderRadius:'20px',
-            fontWeight:'bold',
-            marginRight:'10px'
+            fontWeight:'bold'
           }}
         >
           Search Ads Desktop View
@@ -567,10 +639,6 @@ function PreviewPage() {
           Search Ads Mobile View
         </button>
 
-        {/* 
-          Afișăm butoanele Display Ads doar dacă s-a selectat 
-          "Include Display Ads" în App.js (citim din Firestore)
-        */}
         {includeDisplayAds && (
           <>
             <button
@@ -582,9 +650,7 @@ function PreviewPage() {
                 color:'#fff',
                 border:'none',
                 borderRadius:'20px',
-                fontWeight:'bold',
-                marginLeft:'10px',
-                marginRight:'10px'
+                fontWeight:'bold'
               }}
             >
               Display Ads
@@ -607,7 +673,7 @@ function PreviewPage() {
         )}
       </div>
 
-      {/* Containerul pt. anunțurile generate */}
+      {/* Container anunțuri */}
       <div style={{
         maxWidth:
           viewMode === 'desktop' ? '800px'

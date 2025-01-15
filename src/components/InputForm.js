@@ -1,5 +1,7 @@
 // InputForm.js
 import React from 'react';
+import InputMask from 'react-input-mask';
+
 
 function InputForm({
   headlines1, setHeadlines1,

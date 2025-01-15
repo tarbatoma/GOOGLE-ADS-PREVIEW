@@ -4,14 +4,14 @@ import { getFirestore } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 
 const firebaseConfig = {
-  // Configurația ta Firebase
-  apiKey: "AIzaSyDBLaC2rNb87SOkPE3rRkAgXIq3tCylH2A",
-  authDomain: "noble-house-gads-preview.firebaseapp.com",
-  projectId: "noble-house-gads-preview",
-  storageBucket: "noble-house-gads-preview.firebasestorage.app",
-  messagingSenderId: "536676302866",
-  appId: "1:536676302866:web:8040fdb7516b0d727698cb",
-  measurementId: "G-W1BZTKZRBL"
+  // Configurație Firebase
+  apiKey: "AIzaSyCSC97N1c5Rd-mIrU9URBK4dsNu4YR28k8",
+  authDomain: "noble-house--ads-preview.firebaseapp.com",
+  projectId: "noble-house--ads-preview",
+  storageBucket: "noble-house--ads-preview.firebasestorage.app",
+  messagingSenderId: "760782390491",
+  appId: "1:760782390491:web:925185da4af46623f0b8fe",
+  measurementId: "G-YM9J0D7HWN"
 };
 
 // Inițializează aplicația

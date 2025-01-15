@@ -87,6 +87,7 @@
     .login-title {
       margin-bottom: 1.5rem;
       text-align: center;
+      color:#f0f2f5
     }
     
     /* Inputurile de email / password */
@@ -100,12 +101,14 @@
     
     /* Butonul de login */
     .login-form button {
-      width: 100%;
+      width: 25%;
       padding: 0.75rem;
       background-color: #007bff;
       color: white;
+      
       border: none;
       border-radius: 4px;
       cursor: pointer;
+      font-size: 14px;
     }
     

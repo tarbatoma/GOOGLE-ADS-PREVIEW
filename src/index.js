@@ -16,11 +16,7 @@ function Root() {
   // Ascultăm starea de autentificare
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
-      if (firebaseUser) {
-        setUser(firebaseUser);
-      } else {
-        setUser(null);
-      }
+      setUser(firebaseUser || null);
       setLoading(false);
     });
 
@@ -35,17 +31,21 @@ function Root() {
     );
   }
 
-  // Dacă nu există user logat, afișăm Login
-  if (!user) {
-    return <Login />;
-  }
-
-  // Dacă user este logat, afișăm rutele normale
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<App user={user} />} />
+        {/* Permitem accesul anonim pentru pagina de preview */}
         <Route path="/preview/:id" element={<PreviewPage />} />
+
+        {/* Dacă utilizatorul nu este logat, afișăm Login pentru alte rute */}
+        {!user ? (
+          <Route path="*" element={<Login />} />
+        ) : (
+          <>
+            {/* Rutele normale protejate */}
+            <Route path="/" element={<App user={user} />} />
+          </>
+        )}
       </Routes>
     </Router>
   );

@@ -1,9 +1,9 @@
 // src/Login.js
 import React, { useState, useEffect } from 'react';
 import './styles/Login.css';
-import logo from './assets/logo.png';
+import logo from './assets/noblehouselogologin.jpg';
 import { signInWithEmailAndPassword } from 'firebase/auth';
-import { auth } from './firebase'; // asigură-te că ai export { auth } din firebase
+import { auth } from './firebase'; 
 
 function Login({ onLoginSuccess }) {
   const [email, setEmail] = useState('');

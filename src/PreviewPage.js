@@ -109,7 +109,7 @@ function PreviewPage() {
   );
 
   // ------------------------------------------------
-  // DESKTOP VIEW (la fel ca înainte)
+  // DESKTOP VIEW 
   // ------------------------------------------------
   const renderDesktopView = () => {
     if (!ads || ads.length === 0) return <NoAdsMessage />;
@@ -294,7 +294,7 @@ function PreviewPage() {
   };
 
   // ------------------------------------------------
-  // MOBILE VIEW cu ajustări dimensionale
+  // MOBILE VIEW cu ajustări pt dimensiuni
   // ------------------------------------------------
   const renderMobileView = () => {
     if (!ads || ads.length === 0) return <NoAdsMessage />;
@@ -323,7 +323,7 @@ function PreviewPage() {
               e.currentTarget.style.boxShadow = '0 1px 3px rgba(0,0,0,0.1)';
             }}
           >
-            {/* Mobile Google (rămâne la fel) */}
+            {/* Mobile Google */}
             <div style={{ marginBottom:'10px', textAlign:'center' }}>
               <h2 style={{
                 margin:'0 0 5px',
@@ -390,25 +390,23 @@ function PreviewPage() {
                 style={{
                   fontSize:'12px',
                   color:'#006621',
-                  // Eliminăm whiteSpace:'nowrap' + textOverflow
                 }}
               >
                 {ad.link}
               </span>
             </div>
   
-            {/* HEADLINE - fără ellipsis */}
+            {/* HEADLINE */}
             <h3 style={{
               fontSize:'16px',
               color:'#1a0dab',
               margin:'0 0 8px',
               lineHeight:'1.2',
-              // Eliminăm overflow/textOverflow/whiteSpace
             }}>
               {[ad.h1, ad.h2, ad.h3].filter(Boolean).join(' | ')}
             </h3>
   
-            {/* DESCRIPTIONS - la fel, lăsăm să facă wrap */}
+            {/* DESCRIPTIONS -lăsăm să facă wrap */}
             <p style={{
               fontSize:'14px',
               margin:'0 0 5px',
@@ -568,6 +566,15 @@ function PreviewPage() {
       }}
     >
       <div style={{ textAlign:'center', marginBottom:'30px' }}>
+      <h2 style={{
+        margin:'0 0 10px',
+        color:'#fff',
+        fontSize:'2em',
+        fontWeight:'normal',
+        textShadow:'0 2px 5px rgba(0,0,0,0.3)'
+      }}>
+        Noble House Media Group
+      </h2>
         <h2 style={{
           margin:'0 0 10px',
           color:'#fff',

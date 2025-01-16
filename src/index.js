@@ -4,9 +4,9 @@ import ReactDOM from 'react-dom/client';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { onAuthStateChanged } from 'firebase/auth';
 
-import { auth } from './firebase'; // Asigură-te că ai export { auth } în firebase.js
-import Login from './Login';       // Pagina de login
-import App from './App';          // Aplicația principală
+import { auth } from './firebase'; 
+import Login from './Login';       
+import App from './App';         
 import PreviewPage from './PreviewPage';
 
 function Root() {

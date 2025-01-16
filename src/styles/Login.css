@@ -51,11 +51,11 @@
     
     /* După show-content, logo și formular devin vizibile cu fadeIn */
     .login-container.show-content .login-logo {
-      animation: fadeIn 0.5s forwards;
+      animation: fadeIn 0.1s forwards;
     }
     
     .login-container.show-content .login-form {
-      animation: fadeIn 0.5s forwards 0.5s;
+      animation: fadeIn 0.1s forwards 0.1s;
     }
     
     /* Formularul propriu-zis */
@@ -79,8 +79,8 @@
     }
     
     .login-logo img {
-      width: 100px;
-      height: 50px;
+      width: 200px;
+      height: 100px;
     }
     
     /* Titlu */

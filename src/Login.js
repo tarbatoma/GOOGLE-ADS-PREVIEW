@@ -40,7 +40,7 @@ function Login({ onLoginSuccess }) {
         <div className="login-logo">
           <img src={logo} alt="Company Logo" />
         </div>
-        <h2 className="login-title">Login</h2>
+        <h2 className="login-title">Sign into your account</h2>
         <input
           type="email"
           placeholder="Email"
@@ -55,7 +55,7 @@ function Login({ onLoginSuccess }) {
           onChange={(e) => setPassword(e.target.value)}
           required
         />
-        <button type="submit">Login</button>
+        <button type="submit">Sign In</button>
       </form>
     </div>
   );

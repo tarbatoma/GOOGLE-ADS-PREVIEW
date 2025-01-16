@@ -7,7 +7,7 @@
         width: 0;
       }
       100% {
-        background-color: #1F2731;
+        background-color: #626870;
         width: 100%;
       }
     }
@@ -60,7 +60,7 @@
     
     /* Formularul propriu-zis */
     .login-form {
-      background: rgba(255, 255, 255, 0.3); /* "frozen" glass effect */
+      background: #596A74; 
       backdrop-filter: blur(10px);
       padding: 2rem;
       border-radius: 8px;
@@ -103,12 +103,13 @@
     .login-form button {
       width: 25%;
       padding: 0.75rem;
-      background-color: #007bff;
+      background-color: #37A0DB;
       color: white;
       
       border: none;
       border-radius: 4px;
       cursor: pointer;
-      font-size: 14px;
+      font-size: 16px;
+      font-weight: bold;
     }
     

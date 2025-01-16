@@ -582,7 +582,7 @@ function PreviewPage() {
           fontWeight:'normal',
           textShadow:'0 2px 5px rgba(0,0,0,0.3)'
         }}>
-          Preview Ads
+          Ads Preview
         </h2>
       </div>
 

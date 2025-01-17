@@ -32,7 +32,7 @@ function InputForm({
 
   const inputStyle = {
     padding: '10px',
-    border: '1px solid #ccc',
+    border: '1px solid #333',
     borderRadius: '8px',
     marginBottom: '10px',
     transition: 'box-shadow 0.3s',

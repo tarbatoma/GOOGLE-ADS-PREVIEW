@@ -526,7 +526,7 @@ function App({ user }) {
           {/* Export PDF cu anunțurile generate */}
           {generatedAds.length > 0 && (
             <div style={{ marginTop: '20px' }}>
-              <ExportPdfButton ads={generatedAds} spreadsheetLink={adCopySpreadsheetLink} />
+              <ExportPdfButton ads={generatedAds} />
             </div>
           )}
         </div>

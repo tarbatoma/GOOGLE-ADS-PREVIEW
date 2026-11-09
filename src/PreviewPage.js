@@ -5,6 +5,7 @@ import { doc, getDoc } from "firebase/firestore";
 import { db } from "./firebase";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPhone } from '@fortawesome/free-solid-svg-icons';
+import ExportPdfButton from './components/ExportPdfButton';
 
 const displayAdImages = [
   { src: require('./assets/displayAds/NH-120by600-px.gif'), alt: '120x600' },
@@ -678,6 +679,8 @@ function PreviewPage() {
             </button>
           </>
         )}
+
+        <ExportPdfButton ads={ads} spreadsheetLink={adCopySpreadsheetLink} />
       </div>
 
       {/* Container anunțuri */}

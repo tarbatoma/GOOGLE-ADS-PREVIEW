@@ -3,6 +3,7 @@ import React, { useState, useRef } from 'react';
 import Papa from 'papaparse';
 import InputForm from './components/InputForm';
 import AdsList from './components/AdsList';
+import ExportPdfButton from './components/ExportPdfButton';
 import { db, auth } from './firebase';
 import { collection, addDoc } from "firebase/firestore";
 import { signOut } from 'firebase/auth';
@@ -519,6 +520,13 @@ function App({ user }) {
               >
                 Copy Link
               </button>
+            </div>
+          )}
+
+          {/* Export PDF cu anunțurile generate */}
+          {generatedAds.length > 0 && (
+            <div style={{ marginTop: '20px' }}>
+              <ExportPdfButton ads={generatedAds} spreadsheetLink={adCopySpreadsheetLink} />
             </div>
           )}
         </div>

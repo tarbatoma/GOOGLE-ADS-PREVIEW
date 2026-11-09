@@ -680,7 +680,7 @@ function PreviewPage() {
           </>
         )}
 
-        <ExportPdfButton ads={ads} spreadsheetLink={adCopySpreadsheetLink} />
+        <ExportPdfButton ads={ads} />
       </div>
 
       {/* Container anunțuri */}

@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFilePdf, faSpinner } from '@fortawesome/free-solid-svg-icons';
 
-function ExportPdfButton({ ads, spreadsheetLink, title }) {
+function ExportPdfButton({ ads }) {
   const [busy, setBusy] = useState(false);
   const disabled = busy || !ads || ads.length === 0;
 
@@ -12,7 +12,7 @@ function ExportPdfButton({ ads, spreadsheetLink, title }) {
     try {
       // încărcăm jsPDF + html2canvas doar când e nevoie
       const { exportAdsToPdf } = await import('../utils/exportAdsPdf');
-      await exportAdsToPdf(ads, { spreadsheetLink, title });
+      await exportAdsToPdf(ads);
     } catch (err) {
       console.error('PDF export error:', err);
       alert('Could not create the PDF. Please try again.');
